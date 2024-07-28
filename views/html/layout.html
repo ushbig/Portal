@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Browse and Borrow Books</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="views/styles/styles.css" rel="stylesheet">
+    <style>
+       
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <div class="container d-flex justify-content-center">
+            <h1 class="h1"><a class="navbar-brand" href="#">LMS Portal</a></h1>
+        </div>
+        <div>
+            <a class="btn btn-outline-light" href="logout.php">Sign Out</a>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block sidebar mt-5">
+                <div class="sidebar-sticky mt-7">
+                    <nav class="navbar navbar-light bg-light mt-5">
+                        <h2 class="navbar-brand text-center">Menu</h2>
+                    </nav>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                Search Book
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                View Book info
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Borrow Book
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Updated Personal Info
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Return Book
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                View Rental History
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+    
+            <main role="main" class="col-md-10 px-md-4">
+                <div class="pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Browse and Borrow Books</h1>
+                </div>
+    
+                <!-- Dynamic content goes here -->
+                <div id="dynamic-content">
+                    <p>No books available.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Include any necessary JavaScript files -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

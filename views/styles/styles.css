@@ -1,0 +1,125 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.loginContainer {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+button {
+    display: block;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+ .navbar-brand {
+     font-size: 24px;
+ }
+
+ .sidebar {
+     background-color: #f8f9fa;
+     /* Light gray background */
+     border-right: 1px solid #dee2e6;
+     /* Gray border */
+     min-height: 100vh;
+     /* Make sidebar full height */
+ }
+
+ .sidebar-heading {
+     font-size: 20px;
+     font-weight: bold;
+     padding: 20px;
+     color: #333;
+     /* Dark gray color */
+     border-bottom: 1px solid #dee2e6;
+     /* Gray border bottom */
+ }
+
+ .nav-link {
+     font-size: 18px;
+     padding: 10px 20px;
+     color: #555;
+     /* Dark gray color */
+     text-align: left;
+     font-weight: bold;
+ }
+
+ .nav-link.active {
+     background-color: #e9ecef;
+     /* Light gray background */
+ }
+
+  .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+  }
+
+  .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-body {
+      padding: 20px;
+  }
+
+  .card-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+  }
+
+  .card-text {
+      margin-bottom: 10px;
+  }
+
+  .btn-custom {
+      font-size: 0.875rem;
+      padding: 5px 10px;
+  }
+
+  .d-flex {
+      justify-content: space-between;
+  }
+
+  .mb-4 {
+      margin-bottom: 1.5rem !important;
+  }
+
+  
+
+ 

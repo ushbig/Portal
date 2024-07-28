@@ -1,0 +1,81 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="text-center">User Login</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="loginForm" action="/signin" method="post">
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password:</label>
+                                <input type="password" id="password" name="password" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        </form>
+                        <!-- Error message container -->
+                        <div id="errorMessage" class="text-danger mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript for form validation -->
+    <script>
+        // Form validation using JavaScript
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var form = document.getElementById('loginForm');
+                form.addEventListener('submit', function(event) {
+                    // Check if form is valid
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    } else {
+                        // Clear previous error message
+                        document.getElementById('errorMessage').innerHTML = '';
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            }, false);
+        })();
+    </script>
+    <!-- JavaScript to display error message -->
+    <script>
+        // Function to display error message
+        function displayErrorMessage(message) {
+            var errorMessageContainer = document.getElementById('errorMessage');
+            errorMessageContainer.innerHTML = message;
+        }
+
+        // Check if there's an error message in the URL query string
+        var urlParams = new URLSearchParams(window.location.search);
+        var error = urlParams.get('error');
+        if (error) {
+            // Display error message
+            displayErrorMessage(decodeURIComponent(error));
+        }
+    </script>
+</body>
+</html>
