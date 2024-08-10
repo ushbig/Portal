@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Books On Loan</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../views/styles/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="header-container"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div id="sidebar-container" class="col-md-2 d-none d-md-block sidebar mt-5"></div>
+            <main role="main" class="col-md-10 px-md-4">
+                <div class="pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Books On Loan</h1>
+                </div>
+                <div class="container">
+                    <h2 class="my-4">Books On Loan</h2>
+                    <div id="topBorrowedBooks" class="row">
+                    </div>
+                </div>
+                <div id="alertMessage" class="alert alert-success" style="display:none;">Operation successful</div>
+                <div id="booksOnLoanContainer"></div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Load header
+            $.get('../views/html/navbar.html', function (data) {
+                $('#header-container').html(data);
+            }).fail(function () {
+                console.error("Error loading header");
+            });
+
+            // Load sidebar
+            $.get('../views/html/sidebar.html', function (data) {
+                $('#sidebar-container').html(data);
+            }).fail(function () {
+                console.error("Error loading sidebar");
+            });
+
+            fetchBooksOnLoan();
+
+            // Show success message if redirected with success
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                $('#alertMessage').show().delay(3000).fadeOut();
+            }
+        });
+
+        function fetchBooksOnLoan() {
+            $.ajax({
+                url: '/books/onloan',
+                method: 'GET',
+                success: function (response) {
+                    const books = JSON.parse(response);
+                    const container = $('#booksOnLoanContainer');
+                    container.empty(); // Clear any existing content
+                    if (books.length > 0) {
+                        const table = `<table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Category</th>
+                                    <th>Language</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>${books.map(book => `
+                                <tr>
+                                    <td>${book.BookTitle}</td>
+                                    <td>${book.Author}</td>
+                                    <td>${book.Category}</td>
+                                    <td>${book.Language}</td>
+                                    <td><button class="btn btn-outline-primary btn-sm" onclick="returnBook(${book.BookID})">Return</button></td>
+                                </tr>`).join('')}
+                            </tbody>
+                        </table>`;
+                        container.append(table);
+                    } else {
+                        container.append('<p>No books on loan.</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching books on loan:', xhr.responseText);
+                    alert('Failed to load books. Please try again.');
+                }
+            });
+        }
+
+        function returnBook(bookId) {
+            $.ajax({
+                url: '/return',
+                method: 'POST',
+                data: { bookId: bookId },
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if (response.success) {
+                        alert('Book returned successfully');
+                        fetchBooksOnLoan(); // Refresh the list of books on loan
+                    } else {
+                        alert(response.error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error returning book:', xhr.responseText);
+                    alert('Failed to return book. Please try again.');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

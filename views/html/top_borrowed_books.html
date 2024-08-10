@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Browse and Borrow Books</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="views/styles/styles.css" rel="stylesheet">
+
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div id="sidebar-container" class="col-md-2 d-none d-md-block sidebar mt-5"></div>
+    
+            <main role="main" class="col-md-10 px-md-4">
+                <div class="pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Browse and Borrow Books</h1>
+                </div>
+    
+                <div class="container">
+                    <h2 class="my-4">Top Books</h2>
+                    <div id="topBorrowedBooks" class="row">
+                        <!-- Books will be dynamically loaded -->
+                    </div>
+                </div>
+
+                <!-- Include any necessary JavaScript files -->
+                <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                <script>
+                      $(document).ready(function() {
+                        // Load header and sidebar
+                        $('#header-container').load('views/html/navbar.html', function(response, status, xhr) {
+                            if (status == "error") {
+                                console.error("Error loading header:", xhr.status, xhr.statusText);
+                            }
+                        });
+                        $('#sidebar-container').load('views/html/sidebar.html', function(response, status, xhr) {
+                            if (status == "error") {
+                                console.error("Error loading sidebar:", xhr.status, xhr.statusText);
+                            }
+                        });
+                        // Function to fetch top borrowed books data from backend
+                        function fetchTopBorrowedBooks() {
+                            $.ajax({
+                                url: 'fetch_top_borrowed_books.php', // PHP script to fetch data
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(response) {
+                                    renderTopBorrowedBooks(response);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error fetching top borrowed books:', error);
+                                }
+                            });
+                        }
+            
+                        // Function to render top borrowed books dynamically
+                        function renderTopBorrowedBooks(books) {
+                            console.log(books);
+                            var topBorrowedBooksContainer = $('#topBorrowedBooks');
+                            topBorrowedBooksContainer.empty();
+            
+                            if (books.length > 0) {
+                                books.forEach(function(book) {
+                                    var card = `
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${book.BookTitle}</h5>
+                                                    <p class="card-text">Author: ${book.Author}</p>
+
+                                                    <p class="card-text">Borrow Count: ${book.BorrowCount}</p>
+                                                </div>
+                                            </div>
+                                        </div>`;
+                                    topBorrowedBooksContainer.append(card);
+                                });
+                            } else {
+                                topBorrowedBooksContainer.html('<p>No books available.</p>');
+                            }
+                        }
+            
+                        // Fetch top borrowed books data when the page loads
+                        fetchTopBorrowedBooks();
+                    });
+                </script>
+            
+            </main>
+        </div>
+   

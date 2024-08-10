@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>On Loan Books</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../views/styles/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="header-container"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div id="sidebar-container" class="col-md-2 d-none d-md-block sidebar mt-5"></div>
+
+            <main role="main" class="col-md-10 mt-5 px-md-4">
+                <div class="pt-3 pb-2 mt-4 mb-3 border-bottom">
+                    <h1 class="h2">Books Currently On Loan</h1>
+                </div>
+
+                <div id="alertMessage" class="alert alert-success" role="alert" style="display: none;">
+                    Book borrowed successfully!
+                </div>
+
+                <div class="container">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Language</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="availableBooksTable">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Include necessary JavaScript files -->
+                <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                <script>
+                    $(document).ready(function () {
+                        // Load header and sidebar
+                        $('#header-container').load('../views/html/navbar.html', function (response, status, xhr) {
+                            if (status == "error") {
+                                console.error("Error loading header:", xhr.status, xhr.statusText);
+                            }
+                        });
+                        $('#sidebar-container').load('../views/html/sidebar.html', function (response, status, xhr) {
+                            if (status == "error") {
+                                console.error("Error loading sidebar:", xhr.status, xhr.statusText);
+                            }
+                        });
+
+                        // Fetch available books
+                        fetchAvailableBooks();
+
+                        // Show success message if redirected with success
+                        const urlParams = new URLSearchParams(window.location.search);
+                        if (urlParams.has('success')) {
+                            $('#alertMessage').show().delay(3000).fadeOut();
+                        }
+                    });
+
+                    function fetchAvailableBooks() {
+                        $.ajax({
+                            url: '/books/available',
+                            method: 'GET',
+                            success: function (response) {
+                                const books = JSON.parse(response);
+                                const tableBody = $('#availableBooksTable');
+                                tableBody.empty(); // Clear any existing rows
+                                books.forEach(book => {
+                                    const row = `<tr>
+                                        <td>${book.BookTitle}</td>
+                                        <td>${book.Author}</td>
+                                        <td>${book.Category}</td>
+                                        <td>${book.Language}</td>
+                                        <td><a class="btn btn-outline-primary btn-sm" href="#" data-book-id="${book.BookID}" onclick="borrowBook(this)">
+                                            Borrow
+                                        </a></td>
+                                    </tr>`;
+                                    tableBody.append(row);
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error fetching available books:', xhr.responseText);
+                                alert('Failed to load books. Please try again.');
+                            }
+                        });
+                    }
+
+                    function borrowBook(button) {
+                        const bookId = $(button).data('book-id');
+                        $.ajax({
+                            url: '/borrow',
+                            method: 'POST',
+                            data: { bookId: bookId },
+                            success: function (response) {
+                                response = JSON.parse(response);
+                                if (response.success) {
+                                    $('#alertMessage').show().delay(3000).fadeOut();
+                                    fetchAvailableBooks(); // Refresh the available books list
+                                } else {
+                                    alert(response.error); // Display an error message
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error borrowing book:', xhr.responseText);
+                                alert('Failed to borrow book. Please try again.');
+                            }
+                        });
+                    }
+                </script>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

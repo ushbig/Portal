@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Browse and Borrow Books</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="views/styles/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="header-container"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="sidebar-container" class="col-md-2 d-none d-md-block sidebar mt-5"></div>
+            <main role="main" class="col-md-10 px-md-4">
+                <div class="pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Browse and Borrow Books</h1>
+                </div>
+                <div class="container">
+                    <h2 class="my-4">Browse and Borrow Books</h2>
+                    <div id="alertMessage" class="alert alert-success" style="display:none;">Action was successful!
+                    </div>
+                    <div id="booksContainer" class="row"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add/Edit Book Modal -->
+    <div class="modal fade" id="bookModal" tabindex="-1" role="dialog" aria-labelledby="bookModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-wide modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Edit</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="bookForm">
+                        <input type="hidden" id="bookId" name="book_id">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="bookTitle">Book Title</label>
+                                <input type="text" class="form-control" id="bookTitle" name="BookTitle" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="bookAuthor">Author</label>
+                                <input type="text" class="form-control" id="bookAuthor" name="Author" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="bookPublisher">Publisher</label>
+                                <input type="text" class="form-control" id="bookPublisher" name="Publisher" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="bookCategory">Category</label>
+                                <input type="text" class="form-control" id="bookCategory" name="Category" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="bookStatus">Status</label>
+                                <select class="form-control" id="bookStatus" name="Status" required>
+                                    <option value="Available">Available</option>
+                                    <option value="Onloan">Onloan</option>
+                                    <option value="Deleted">Deleted</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitBookForm()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+                // Load header
+                $.get('views/html/navbar.html', function (data) {
+                    $('#header-container').html(data);
+                }).fail(function () {
+                    console.error("Error loading header");
+                });
+
+                // Load sidebar
+                $.get('views/html/sidebar.html', function (data) {
+                    $('#sidebar-container').html(data);
+                }).fail(function () {
+                    console.error("Error loading sidebar");
+                });
+
+                // Fetch available books
+                renderBooks();
+
+                // Show success message if redirected with success
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('success')) {
+                    $('#alertMessage').show().delay(5000).fadeOut();
+                }
+            });
+
+            function renderBooks() {
+                $('#booksContainer').html('<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+                $.ajax({
+                    url: '/book',
+                    method: 'GET',
+                    success: function (response) {
+                        const books = JSON.parse(response);
+                        var booksContainer = document.getElementById('booksContainer');
+                        booksContainer.innerHTML = '';
+
+                        if (books.length > 0) {
+                            books.forEach(function (book) {
+                                var card = document.createElement('div');
+                                card.className = 'col-md-4 mb-4';
+                                card.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">${book.BookTitle}</h5>
+                                <p class="card-text"><strong>Author:</strong> ${book.Author}</p>
+                                <p class="card-text"><strong>Publisher:</strong> ${book.Publisher}</p>
+                                <p class="card-text"><strong>Category:</strong> ${book.Category}</p>
+                                <p class="card-text"><strong>Status:</strong> ${book.Status}</p>
+                                ${book.MemberType === 'Admin' ? `
+                                        <button class="btn btn-warning  btn" onclick='editBook(${JSON.stringify(book)})'>Edit</button>
+                                   ` : ''}
+                            </div>
+                        </div>`;
+                                booksContainer.appendChild(card);
+                            });
+                        } else {
+                            booksContainer.innerHTML = '<p>No books available.</p>';
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching books:', xhr.responseText);
+                    }
+                });
+            }
+
+            function editBook(book) {
+                $('#bookModal').modal('show');
+                $('#bookId').val(book.BookID);
+                $('#bookTitle').val(book.BookTitle);
+                $('#bookAuthor').val(book.Author);
+                $('#bookPublisher').val(book.Publisher);
+                $('#bookCategory').val(book.Category);
+                $('#bookStatus').val(book.Status);
+            }
+
+            function submitBookForm() {
+                const bookData = $('#bookForm').serialize() + '&action=saveBook';
+
+                $.ajax({
+                    url: 'books/update',
+                    method: 'POST',
+                    data: bookData,
+                    success: function (response) {
+                        $('#bookModal').modal('hide');
+                        renderBooks();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error saving book:', xhr.responseText);
+                    }
+                });
+            }
+
+   
+
+    </script>
+</body>
+
+</html>
