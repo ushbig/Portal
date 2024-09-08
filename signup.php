@@ -7,7 +7,7 @@ function view_signup() {
 // Function to redirect to login page 
 function redirectToLogin($message = "")
 {
-        header("Location: login.html?success=" . urlencode($message));
+        header("Location: login?success=" . urlencode($message));
     
     exit();
 }
