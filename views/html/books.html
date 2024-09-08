@@ -108,22 +108,24 @@
                 }
             });
 
-            function renderBooks() {
-                $('#booksContainer').html('<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
-                $.ajax({
-                    url: '/book',
-                    method: 'GET',
-                    success: function (response) {
-                        const books = JSON.parse(response);
-                        var booksContainer = document.getElementById('booksContainer');
-                        booksContainer.innerHTML = '';
+    function renderBooks() {
+        $('#booksContainer').html('<div class="col-12 text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
 
-                        if (books.length > 0) {
-                            books.forEach(function (book) {
-                                var card = document.createElement('div');
-                                card.className = 'col-md-4 mb-4';
-                                card.innerHTML = `
-                        <div class="card">
+        $.ajax({
+            url: '/book',
+            method: 'GET',
+            success: function (response) {
+                const books = JSON.parse(response);
+                var booksContainer = document.getElementById('booksContainer');
+                booksContainer.innerHTML = '';
+
+                if (books.length > 0) {
+                    books.forEach(function (book) {
+                        var card = document.createElement('div');
+                        card.className = 'col-md-4 mb-4';
+                        card.innerHTML = `
+                        <div class="card h-100">
+                            <img src="${book.BookCoverURL}" class="card-img-top" height="200" alt="${book.BookTitle} cover">
                             <div class="card-body">
                                 <h5 class="card-title">${book.BookTitle}</h5>
                                 <p class="card-text"><strong>Author:</strong> ${book.Author}</p>
@@ -131,21 +133,22 @@
                                 <p class="card-text"><strong>Category:</strong> ${book.Category}</p>
                                 <p class="card-text"><strong>Status:</strong> ${book.Status}</p>
                                 ${book.MemberType === 'Admin' ? `
-                                        <button class="btn btn-warning  btn" onclick='editBook(${JSON.stringify(book)})'>Edit</button>
-                                   ` : ''}
+                                    <button class="btn btn-warning btn" onclick='editBook(${JSON.stringify(book)})'>Edit</button>
+                                ` : ''}
                             </div>
                         </div>`;
-                                booksContainer.appendChild(card);
-                            });
-                        } else {
-                            booksContainer.innerHTML = '<p>No books available.</p>';
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error fetching books:', xhr.responseText);
-                    }
-                });
+                        booksContainer.appendChild(card);
+                    });
+                } else {
+                    booksContainer.innerHTML = '<p>No books available.</p>';
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching books:', xhr.responseText);
             }
+        });
+    }
+
 
             function editBook(book) {
                 $('#bookModal').modal('show');

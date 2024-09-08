@@ -45,6 +45,7 @@ function index()
             b.Publisher, 
             b.Language, 
             b.Category, 
+            b.BookCoverURL,
             bs.Status, 
             bs.AppliedDate, 
             us.MemberType

@@ -2,9 +2,8 @@
 require 'db.php';
 
 // Number of records to be inserted into the db 
-$numUsers = 20;
-$numBooks = 20;
-$numBookStatus = 15;
+$numUsers = 10;
+$numBookStatus = 5;
 $pdo->exec("USE $db");
 // Random data to tgenerate
 function getRandomFirstName() {
@@ -22,30 +21,53 @@ function getRandomEmail($firstName, $lastName) {
     return strtolower($firstName . '.' . $lastName . '@' . $domains[array_rand($domains)]);
 }
 
-function getRandomBookTitle() {
-    $titles = ['The Great Adventure', 'Mystery of the Lost Island', 'Journey to the Unknown', 'Secrets of the Ancient', 'The Final Chapter'];
-    return $titles[array_rand($titles)];
+
+ function getBooks() {
+    $books = [
+        [
+            "title"=> "great expectations",
+            "author"=> "charles dickens",
+            "publisher"=> "macmillan collectors library",
+            "language"=>"English",
+            "category"=> "Fiction",
+            "bookCoverURL" => "storage\imgs\book_1.png"
+        ],
+        [
+            "title" => "an inconvenient truth",
+            "author" => "al gore",
+            "publisher" => "penguin books",
+            "language" => "English",
+            "category" => "Nonfiction",
+            "bookCoverURL" => "storage\imgs\book_2.png"
+        ],
+        [
+            "title" => "oxford dictionary",
+            "author" => "oxford press",
+            "publisher" => "oxford press",
+            "language" => "English",
+            "category" => "Reference",
+            "bookCoverURL" => "storage\imgs\book_3.png"
+        ],
+        [
+            "title" => "anna karenina",
+            "author" => "leo tolstoy",
+            "publisher" => "kinokuniya",
+            "language" => "Russian",
+            "category" => "Fiction",
+            "bookCoverURL" => "storage\imgs\book_4.png"
+        ],
+        [
+            "title" => "the tale of genji",
+            "author" => "murasaki shikibu",
+            "publisher" => "kinokuniya",
+            "language" => "Japanese",
+            "category" => "Fiction",
+            "bookCoverURL"=> "storage\imgs\book_5.png"
+        ]
+    ];
+    return $books;
 }
 
-function getRandomAuthor() {
-    $authors = ['Author One', 'Author Two', 'Author Three', 'Author Four', 'Author Five'];
-    return $authors[array_rand($authors)];
-}
-
-function getRandomPublisher() {
-    $publishers = ['Publisher A', 'Publisher B', 'Publisher C', 'Publisher D', 'Publisher E'];
-    return $publishers[array_rand($publishers)];
-}
-
-function getRandomCategory() {
-    $categories = ['Fiction', 'Nonfiction', 'Reference'];
-    return $categories[array_rand($categories)];
-}
-
-function getRandomLanguage() {
-    $languages = ['English', 'French', 'German', 'Mandarin', 'Japanese', 'Russian', 'Other'];
-    return $languages[array_rand($languages)];
-}
 
 function getRandomStatus() {
     $statuses = ['Available', 'Onloan', 'Deleted'];
@@ -77,35 +99,38 @@ for ($i = 0; $i < $numUsers; $i++) {
 }
 
 // insert data books
-for ($i = 0; $i < $numBooks; $i++) {
-    $bookTitle = getRandomBookTitle();
-    $author = getRandomAuthor();
-    $publisher = getRandomPublisher();
-    $language = getRandomLanguage();
-    $category = getRandomCategory();
+foreach(getBooks() as $book) {
 
     try {
-        $sql = "INSERT INTO Book (BookTitle, Author, Publisher, Language, Category) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO Book (BookTitle, Author, Publisher, Language, Category,BookCoverURL) VALUES (?, ?, ?, ?, ?,?)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$bookTitle, $author, $publisher, $language, $category]);
+        $stmt->execute([$book['title'], $book['author'], $book['publisher'], $book['language'], $book['category'], $book['bookCoverURL']]);
     } catch (PDOException $e) {
         echo "Error inserting book: " . $e->getMessage() . "\n";
     }
 }
 
-// insert data book statuses
+//insert status 
+$numBooks = $pdo->query("SELECT COUNT(*) FROM Book")->fetchColumn();
+$numUsers = $pdo->query("SELECT COUNT(*) FROM User")->fetchColumn();
+
 for ($i = 0; $i < $numBookStatus; $i++) {
     $bookID = getRandomBookID($numBooks);
     $memberID = getRandomMemberID($numUsers);
     $status = getRandomStatus();
     $appliedDate = date('Y-m-d H:i:s', strtotime('-' . rand(0, 365) . ' days'));
 
-    try {
-        $sql = "INSERT INTO BookStatus (BookID, MemberID, Status, AppliedDate) VALUES (?, ?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$bookID, $memberID, $status, $appliedDate]);
-    } catch (PDOException $e) {
-        echo "Error inserting book status: " . $e->getMessage() . "\n";
+    // Validate BookID and MemberID
+    if ($bookID > 0 && $bookID <= $numBooks && $memberID > 0 && $memberID <= $numUsers) {
+        try {
+            $sql = "INSERT INTO BookStatus (BookID, MemberID, Status, AppliedDate) VALUES (?, ?, ?, ?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$bookID, $memberID, $status, $appliedDate]);
+        } catch (PDOException $e) {
+            echo "Error inserting book status: " . $e->getMessage() . "\n";
+        }
+    } else {
+        echo "Invalid BookID or MemberID: BookID=$bookID, MemberID=$memberID\n";
     }
 }
 

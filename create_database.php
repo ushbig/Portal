@@ -22,7 +22,8 @@ try {
         Author VARCHAR(30),
         Publisher VARCHAR(30),
         Language ENUM('English', 'French', 'German', 'Mandarin', 'Japanese', 'Russian', 'Other') DEFAULT 'English',
-        Category ENUM('Fiction', 'Nonfiction', 'Reference') DEFAULT 'Fiction'
+        Category ENUM('Fiction', 'Nonfiction', 'Reference') DEFAULT 'Fiction',
+        BookCoverURL VARCHAR(255)
     );
     
     CREATE TABLE IF NOT EXISTS BookStatus (
