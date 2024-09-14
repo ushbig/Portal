@@ -98,6 +98,15 @@ for ($i = 0; $i < $numUsers; $i++) {
     }
 }
 
+try {
+$password = md5('Password');
+        $sql = "INSERT INTO User (FirstName, LastName, Email, Password, MemberType) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['Admin', 'Admin','admin@admin.com', $password, 'Admin']);
+    } catch (PDOException $e) {
+        echo "Error inserting user: " . $e->getMessage() . "\n";
+    }
+
 // insert data books
 foreach(getBooks() as $book) {
 
